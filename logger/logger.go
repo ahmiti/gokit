@@ -5,11 +5,6 @@ import (
 	"os"
 )
 
-type Config struct {
-	Level  string `yaml:"level"`
-	Format string `yaml:"format"`
-}
-
 func New(cfg Config) *slog.Logger {
 	var level slog.Level
 	switch cfg.Level {
@@ -24,10 +19,12 @@ func New(cfg Config) *slog.Logger {
 	}
 
 	var handler slog.Handler
+	opts := &slog.HandlerOptions{Level: level}
+
 	if cfg.Format == "json" {
-		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: level})
+		handler = slog.NewJSONHandler(os.Stdout, opts)
 	} else {
-		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: level})
+		handler = slog.NewTextHandler(os.Stdout, opts)
 	}
 
 	return slog.New(handler)

@@ -36,7 +36,6 @@ func New(cfg Config, logger *slog.Logger) *Server {
 	}
 
 	srv.setupHealth()
-
 	return srv
 }
 
@@ -47,6 +46,10 @@ func (s *Server) setupHealth() {
 
 	s.app.Get("/health/ready", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"status": "ready"})
+	})
+
+	s.app.Get("/metrics", func(c *fiber.Ctx) error {
+		return c.SendString("# Prometheus metrics placeholder\n")
 	})
 }
 

@@ -17,6 +17,10 @@ const (
 	Internal
 )
 
+func (k Kind) String() string {
+	return [...]string{"NotFound", "Validation", "Conflict", "Unauthorized", "Forbidden", "RateLimited", "Unavailable", "Internal"}[k]
+}
+
 type Error struct {
 	kind    Kind
 	code    string
@@ -39,13 +43,18 @@ func (e *Error) Error() string {
 	return e.message
 }
 
-func (e *Error) Kind() Kind      { return e.kind }
-func (e *Error) Code() string    { return e.code }
-func (e *Error) Message() string { return e.message }
+func (e *Error) Kind() Kind        { return e.kind }
+func (e *Error) Code() string      { return e.code }
+func (e *Error) Message() string   { return e.message }
+func (e *Error) Cause() error      { return e.cause }
 
 func (e *Error) WithCause(cause error) *Error {
 	e.cause = cause
 	return e
+}
+
+func (e *Error) Unwrap() error {
+	return e.cause
 }
 
 func HTTPStatus(kind Kind) int {
