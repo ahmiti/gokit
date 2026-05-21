@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"testing"
+	"time"
 )
 
 func TestNew(t *testing.T) {
@@ -38,10 +39,9 @@ func TestWithTraceID(t *testing.T) {
 	var buf bytes.Buffer
 	opts := &slog.HandlerOptions{Level: slog.LevelInfo}
 	handler := slog.NewJSONHandler(&buf, opts)
-	slog.SetDefault(slog.New(handler))
 
 	ctx := context.WithValue(context.Background(), TraceIDKey{}, "test-trace-123")
-	r := slog.NewRecord(slog.TimeKey, slog.LevelInfo, "test message", 0)
+	r := slog.NewRecord(time.Now(), slog.LevelInfo, "test message", 0)
 	r.AddAttrs(slog.String("key", "value"))
 
 	_ = handler.Handle(ctx, r)
